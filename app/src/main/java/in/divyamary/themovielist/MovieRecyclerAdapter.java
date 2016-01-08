@@ -58,11 +58,15 @@ public class MovieRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         Movie movie = mMovieList.get(position);
         Context context = ((ImageViewHolder)holder).imageView.getContext();
-        Picasso.with(context).load(movie.getMoviePosterURL()).into(((ImageViewHolder)holder).imageView);
+        Picasso.with(context)
+                .load(movie.getMoviePosterURL())
+                .into(((ImageViewHolder) holder).imageView);
     }
 
-    public void addData(List<Movie> moviesList) {
-        mMovieList.clear();
+    public void addData(List<Movie> moviesList, Boolean isRefresh) {
+        if (isRefresh) {
+            mMovieList.clear();
+        }
         mMovieList.addAll(moviesList);
     }
 

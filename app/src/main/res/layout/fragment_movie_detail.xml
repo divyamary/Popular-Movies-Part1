@@ -29,7 +29,7 @@
             android:layout_marginTop="8dp"
             card_view:cardElevation="4dp"
             card_view:cardBackgroundColor="#FAFAFA"
-            card_view:cardCornerRadius="0dp"
+            card_view:cardCornerRadius="2dp"
             >
 
             <LinearLayout
@@ -44,6 +44,7 @@
                     android:breakStrategy="high_quality"
                     android:paddingLeft="16dp"
                     android:paddingRight="16dp"
+                    android:gravity="center"
                     android:textAllCaps="true"
                     android:textAppearance="@style/TextAppearance.AppCompat.Large"
                     android:fontFamily="sans-serif-condensed"
@@ -175,7 +176,7 @@
             android:layout_marginTop="8dp"
             card_view:cardElevation="4dp"
             card_view:cardBackgroundColor="#FAFAFA"
-            card_view:cardCornerRadius="0dp"
+            card_view:cardCornerRadius="2dp"
             >
 
             <LinearLayout
@@ -215,7 +216,7 @@
             android:layout_marginTop="8dp"
             card_view:cardElevation="4dp"
             card_view:cardBackgroundColor="#FAFAFA"
-            card_view:cardCornerRadius="0dp"
+            card_view:cardCornerRadius="2dp"
             >
 
             <LinearLayout

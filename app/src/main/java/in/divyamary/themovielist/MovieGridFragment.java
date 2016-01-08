@@ -1,20 +1,23 @@
 package in.divyamary.themovielist;
 
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -34,21 +37,18 @@ import java.util.List;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class MovieGridFragment extends Fragment implements FetchMovieTaskListener {
+public class MovieGridFragment extends Fragment implements FetchMovieTaskListener, AdapterView.OnItemSelectedListener {
 
     public final static String MOVIE = "in.divyamary.sunshine.MOVIE";
-    //private MovieAdapter mMovieAdapter;
     private RecyclerView mRecyclerView;
     private MovieRecyclerAdapter mAdapter;
     private GridLayoutManager mLayoutManager;
-    private SwipeRefreshLayout swipeRefreshLayout;
-
-    private int previousTotal = 0;
     private int visibleThreshold = 4;
-    int firstVisibleItem, visibleItemCount, totalItemCount, lastVisibleItem, last;
+    int firstVisibleItem, visibleItemCount, totalItemCount;
     private int currentPage = 1;
     private boolean loading = true;
-    private boolean endlessScroll = false;
+    private List<Movie> mMoviesList;
+    private boolean isRefresh = false;
 
     public MovieGridFragment() {
     }
@@ -56,83 +56,114 @@ public class MovieGridFragment extends Fragment implements FetchMovieTaskListene
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-        final List<Movie> moviesList = new ArrayList<>();
+        final View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+        mMoviesList = new ArrayList<>();
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
         mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new GridLayoutManager(getContext(), 2);
         mRecyclerView.setLayoutManager(mLayoutManager);
-        mAdapter = new MovieRecyclerAdapter(moviesList);
+        mAdapter = new MovieRecyclerAdapter(mMoviesList);
+
+        Spinner spinner = (Spinner) rootView.findViewById(R.id.spinner_sort);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
+                R.array.sort_array, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
+        spinner.setOnItemSelectedListener(this);
+
+       /* Toolbar toolbar = (Toolbar)rootView.findViewById(R.id.tool_bar);
+        ArrayList<String> spinnerArray = new ArrayList<String>();
+        spinnerArray.add("Popularity");
+        spinnerArray.add("Highest Rated");
+
+        Spinner spinner = new Spinner(getContext(), Spinner.MODE_DROPDOWN);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout
+                .LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        layoutParams.gravity = Gravity.RIGHT;
+        spinner.setLayoutParams(layoutParams);
+        spinner.setGravity(Gravity.RIGHT);
+        spinner.setPrompt("Sort by");
+        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(getContext(),
+                android.R.layout.simple_spinner_item, spinnerArray);
+        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(spinnerArrayAdapter);
+        spinnerArrayAdapter.notifyDataSetChanged();
+        spinner.setOnItemSelectedListener(this);
+        toolbar.addView(spinner);*/
+
         mRecyclerView.setAdapter(mAdapter);
         // Add scroll listener
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-                firstVisibleItem = mLayoutManager.findFirstVisibleItemPosition();
-                visibleItemCount = mLayoutManager.getChildCount();
-                totalItemCount = mLayoutManager.getItemCount();
-                if(newState ==recyclerView.SCROLL_STATE_SETTLING){
-                    if (!loading) {
-                        //if ((totalItemCount - visibleItemCount) <= (firstVisibleItem + visibleThreshold)) {
-                        if (firstVisibleItem + visibleItemCount >= totalItemCount) {
-                            endlessScroll = true;
-                            new FetchMovieTask(new FetchMovieTaskListener() {
-                                @Override
-                                public void fetchMovieCompleted() {
-                                    loading = false;
-                                    currentPage++;
-                                }
-                            }).execute(currentPage);
-                            loading = true;
-                        }
-                    }
-                }
-            }
-
-           /* @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
                 firstVisibleItem = mLayoutManager.findFirstVisibleItemPosition();
                 visibleItemCount = mLayoutManager.getChildCount();
                 totalItemCount = mLayoutManager.getItemCount();
-                last = mLayoutManager.findLastCompletelyVisibleItemPosition();
                 if (dy > 0) {
                     if (!loading) {
-                        //if ((totalItemCount - visibleItemCount) <= (firstVisibleItem + visibleThreshold)) {
-                        if (firstVisibleItem + visibleItemCount >= totalItemCount) {
-                            endlessScroll = true;
+                        if (firstVisibleItem + visibleItemCount >= totalItemCount - visibleThreshold) {
                             new FetchMovieTask(new FetchMovieTaskListener() {
                                 @Override
                                 public void fetchMovieCompleted() {
                                     loading = false;
-                                    currentPage++;
+                                    currentPage = currentPage + 1;
                                 }
-                            }).execute(currentPage);
+                            }).execute(currentPage + 1);
                             loading = true;
                         }
                     }
                 }
-            }*/
+            }
         });
-
         return rootView;
     }
 
     @Override
     public void onStart() {
         super.onStart();
+        if (Utils.isInternetConnected(getContext())) {
+            new FetchMovieTask(new FetchMovieTaskListener() {
+                @Override
+                public void fetchMovieCompleted() {
+                    loading = false;
+                }
+            }).execute(currentPage);
+        } else {
+            Snackbar snackbar = Snackbar.make(getView().findViewById(R.id.recycler_view), "No Internet Connection!",
+                    Snackbar.LENGTH_LONG);
+            View snackBarView = snackbar.getView();
+            snackBarView.setBackgroundColor(Color.argb(80, 0, 0, 0));
+            snackbar.show();
+        }
+    }
+
+    @Override
+    public void fetchMovieCompleted() {
+        loading = false;
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long l) {
+        String sortString = adapterView.getItemAtPosition(pos).toString();
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(getString(R.string.pref_sort_type), sortString).commit();
+        isRefresh = true;
+        currentPage = 1;
         new FetchMovieTask(new FetchMovieTaskListener() {
             @Override
             public void fetchMovieCompleted() {
                 loading = false;
             }
         }).execute(currentPage);
+
     }
 
     @Override
-    public void fetchMovieCompleted() {
-        loading = false;
+    public void onNothingSelected(AdapterView<?> adapterView) {
+
     }
 
     public class FetchMovieTask extends AsyncTask<Integer, Void, List<Movie>> {
@@ -155,7 +186,7 @@ public class MovieGridFragment extends Fragment implements FetchMovieTaskListene
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            dialog = ProgressDialog.show(getContext(), "Loading Movies", "Please Wait...");
+            //dialog = ProgressDialog.show(getContext(), "Loading Movies", "Please Wait...");
         }
 
         @Override
@@ -165,13 +196,14 @@ public class MovieGridFragment extends Fragment implements FetchMovieTaskListene
             URL url;
             HttpURLConnection httpURLConnection = null;
             BufferedReader bufferedReader = null;
-            String sortType = "";
             String page = "";
             String count="";
+            String sortType = "";
             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
             sortType = sharedPreferences.getString(getString(R.string.pref_sort_type), getString(R.string.pref_sort_default_value));
             if (sortType.equals("Popularity")) {
                 sortType = "popularity.desc";
+                count = "0";
             } else {
                 sortType = "vote_average.desc";
                 count = "100";
@@ -261,8 +293,9 @@ public class MovieGridFragment extends Fragment implements FetchMovieTaskListene
         @Override
         protected void onPostExecute(List<Movie> movieList) {
             super.onPostExecute(movieList);
-            dialog.dismiss();
-            mAdapter.addData(movieList);
+            //dialog.dismiss();
+            mAdapter.addData(movieList, isRefresh);
+            isRefresh = false;
             //mAdapter.setLoading(false);
             Log.d(LOG_TAG, "MovieList size::" + movieList.size());
             mAdapter.notifyDataSetChanged();
