@@ -1,14 +1,93 @@
 <resources>
-    <string name="app_name">The Movie List</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
-
-<!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="app_name">Movie Reel</string>
+    <string name="action_about">About</string>
     <string name="title_activity_movie_detail">MovieDetailActivity</string>
+    <string name="title_activity_about">AboutActivity</string>
 
+    <!--TMDB API KEY REPLACE KEY HERE-->
+    <string name="tmdb_api_key">xxx</string>
+    <!--END TMDB API KEY-->
+
+    <!--URL strings-->
+    <string name="url_base">http://api.themoviedb.org/3/discover/movie</string>
+    <string name="url_base_movie">http://api.themoviedb.org/3/movie</string>
+    <string name="url_base_image">http://image.tmdb.org/t/p/</string>
+    <string name="param_sort">sort_by</string>
+    <string name="param_count">vote_count.gte</string>
+    <string name="param_page">page</string>
+    <string name="param_api">api_key</string>
+    <string name="param_append">append_to_response</string>
+    <string name="append_values">credits,releases</string>
+    <string name="request_method_get">GET</string>
+    <string name="pref_popularity">Popularity</string>
+    <string name="sort_popularity">popularity.desc</string>
+    <string name="sort_rating">vote_average.desc</string>
+
+    <!--Text strings-->
+    <string name="text_votes">votes</string>
+    <string name="text_certified">Certified</string>
+    <string name="text_director">Director</string>
+    <string name="text_minutes">min</string>
+    <string name="text_overview">Overview</string>
+    <string name="text_not_available">N/A</string>
+
+    <!--JSON strings-->
+    <string name="json_results">results</string>
+    <string name="json_poster_path">poster_path</string>
+    <string name="json_overview">overview</string>
+    <string name="json_release_date">release_date</string>
+    <string name="json_title">title</string>
+    <string name="json_orig_lang">original_language</string>
+    <string name="json_id">id</string>
+    <string name="json_popularity">popularity</string>
+    <string name="json_vote_avg">vote_average</string>
+    <string name="json_genres">genres</string>
+    <string name="json_name">name</string>
+    <string name="json_backdrop_path">backdrop_path</string>
+    <string name="json_runtime">runtime</string>
+    <string name="json_status">status</string>
+    <string name="json_vote_count">vote_count</string>
+    <string name="json_credits">credits</string>
+    <string name="json_crew">crew</string>
+    <string name="json_job">job</string>
+    <string name="json_Director">Director</string>
+    <string name="json_cast">cast</string>
+    <string name="json_countries">countries</string>
+    <string name="json_profile_path">profile_path</string>
+    <string name="json_releases">releases</string>
+    <string name="json_iso_3166_1">iso_3166_1</string>
+    <string name="json_certification">certification</string>
+    <string name="json_US">US</string>
+
+    <string name="poster_image_size">w185</string>
+    <string name="backdrop_image_size">w500</string>
+    <string name="poster_image_size_small">w185</string>
+    <string name="default_vote_count">0</string>
+    <string name="vote_count">100</string>
+
+    <string name="date_format">yyyy-MM-DD</string>
+    <string name="date_format_new">yyyy.MMM d</string>
+    <string name="vote_format">%.1f</string>
+
+    <string name="sans_serif_light">sans-serif-light</string>
+    <string name="spinner_prompt">Sort by</string>
+
+    <!--Errors-->
+    <string name="no_internet">No Internet Connection!</string>
+
+    <string name="grid_image">Grid Image</string>
+    <string name="backdrop_image">Backdrop Movie Image</string>
+    <string name="icon_rating">Rating Icon</string>
+    <string name="icon_runtime">Runtime Icon</string>
+    <string name="icon_calendar">Calendar Icon</string>
+    <string name="poster_image">Movie Poster</string>
+
+    <!--Sort strings-->
+    <string name="pref_sort_type">Sort</string>
+    <string name="pref_sort_default_value">Popularity</string>
     <string-array name="sort_array">
         <item>Popularity</item>
         <item>Rating</item>
     </string-array>
+
 </resources>

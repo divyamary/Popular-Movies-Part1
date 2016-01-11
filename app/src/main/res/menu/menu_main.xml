@@ -1,16 +1,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools" tools:context=".MainActivity">
-    <!-- <item android:id="@+id/action_settings" android:title="@string/action_settings"
-         android:orderInCategory="100" app:showAsAction="never" />-->
-
-    <group android:checkableBehavior="single">
-        <item
-            android:id="@+id/popular"
-            android:checked="true"
-            android:title="Popularity" />
-        <item
-            android:id="@+id/highest_rated"
-            android:title="Rating" />
-    </group>
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="in.divyamary.sunshine.MainActivity">
+    <item
+        android:id="@+id/action_about"
+        android:title="@string/action_about"
+        android:orderInCategory="100" app:showAsAction="never" />
 </menu>
